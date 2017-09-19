@@ -8,8 +8,8 @@ module SpreeProductAssembly
       end
 
       def add_javascripts
-        append_file "vendor/assets/javascripts/spree/backend/all.js", "//= require spree/backend/spree_product_assembly\n"
-        append_file "vendor/assets/javascripts/spree/frontend/all.js", "//= require spree/frontend/spree_product_assembly\n"
+        append_file "#{js_path}/backend/all.js", "//= require spree/backend/spree_product_assembly\n"
+        append_file "#{js_path}/frontend/all.js", "//= require spree/frontend/spree_product_assembly\n"
       end
 
       def run_migrations
@@ -19,6 +19,13 @@ module SpreeProductAssembly
          else
            puts "Skiping rake db:migrate, don't forget to run it!"
          end
+      end
+
+      private
+
+      def js_path
+        return 'vendor/assets/javascripts/spree' if Dir.exist?('vendor/assets/javascripts/spree')
+        'app/assets/javascripts/spree'
       end
     end
   end
