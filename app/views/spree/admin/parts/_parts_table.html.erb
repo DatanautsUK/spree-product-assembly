@@ -3,8 +3,11 @@
   	<tr>
   	  <th><%= Spree.t(:sku) %></th>
   		<th><%= Spree.t(:name) %></th>
-  		<th><%= Spree.t(:options) %></th>
+      <th><%= Spree.t(:options) %></th>
+      <th><%= Spree.t(:variant) %></th>
   		<th><%= Spree.t(:qty) %></th>
+      <th><%= Spree.t(:assembly)</th>
+      <th></th>
   	</tr>
   </thead>
   <tbody>
@@ -14,6 +17,7 @@
         <td><%= part.name %></td>
         <td><%= variant_options part %></td>
         <td><%= number_field_tag :count, part.count, class: "form-control", style: 'width: 80px' %></td>
+        <td><%= variant_including_master_options part.assembly %></td>
   	    <td class="actions">
           <%= link_to_with_icon("edit", Spree.t("edit"),
                       set_count_admin_product_part_url(product, part),
@@ -26,7 +30,7 @@
       </tr>
     <% end %>
     <% if parts.empty? %>
-     <tr><td colspan="5"><%= Spree.t(:none) %>.</td></tr>
+     <tr><td colspan="7"><%= Spree.t(:none) %>.</td></tr>
     <% end %>
   </tbody>
 </table>
