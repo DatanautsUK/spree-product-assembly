@@ -1,0 +1,4 @@
+/
+  insert_after "[data-hook='inside_product_cart_form']"
+
+= render partial: 'spree/products/show/parts' }
