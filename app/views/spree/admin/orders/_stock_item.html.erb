@@ -15,7 +15,7 @@
       <% end %>
     </td>
 
-    <td class="item-price text-center"><%= Spree::Money.new(item.price, item.currency) %></td>
+    <td class="item-price text-center"><%= Spree::Money.new(item.price, currency: item.currency) %></td>
 
     <td class="item-qty-show text-center">
       <% item.states.each do |state,count| %>
