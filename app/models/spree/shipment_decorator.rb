@@ -12,19 +12,24 @@ module Spree
     # partial so we can get the product there
     def manifest
       items = []
-      inventory_units.joins(:variant).includes(:variant, :line_item).group_by(&:variant).each do |variant, units|
+      inventory_units.includes(:variant, line_item: :product)
+                     .group_by(&:line_item)
+                     .each do |line_item, units_by_line_item|
 
-        units.group_by(&:line_item).each do |line_item, units|
+        part = line_item ? line_item.product.assembly? : false
+        discount_factor = line_item.product.bundle_item_discount_multiplier
+
+        units_by_line_item.group_by(&:variant).each do |variant, line_item_units_by_variant|
           states = {}
-          units.group_by(&:state).each { |state, iu| states[state] = iu.count }
-          line_item ||= order.find_line_item_by_variant(variant)
-
-          part = line_item ? line_item.product.assembly? : false
+          line_item_units_by_variant.group_by(&:state).each { |state, iu| states[state] = iu.length }
+          quantity = line_item_units_by_variant.length
+          price = part ? line_item.price : (variant.price * discount_factor)
           items << OpenStruct.new(part: part,
                                   product: line_item.try(:product),
                                   line_item: line_item,
                                   variant: variant,
-                                  quantity: units.length,
+                                  quantity: quantity,
+                                  price: price,
                                   states: states)
         end
       end
@@ -45,6 +50,16 @@ module Spree
 
     def inventory_units_for_item(line_item, variant)
       inventory_units.where(line_item_id: line_item.id, variant_id: variant.id)
+    end
+
+    def item_cost
+      individual_item_costs.sum
+    end
+
+    def individual_item_costs
+      manifest.map do |m|
+        (m.price + (m.line_item.adjustment_total / m.line_item.quantity)) * m.quantity
+      end
     end
   end
 end
