@@ -12,7 +12,7 @@ module Spree
     # partial so we can get the product there
     def manifest
       items = []
-      inventory_units.includes(:variant, line_item: :product)
+      inventory_units.includes(:variant, line_item: [:currency, product: :parts])
                      .group_by(&:line_item)
                      .each do |line_item, units_by_line_item|
 
@@ -30,6 +30,7 @@ module Spree
                                   variant: variant,
                                   quantity: quantity,
                                   price: price,
+                                  currency: line_item.currency,
                                   states: states)
         end
       end
