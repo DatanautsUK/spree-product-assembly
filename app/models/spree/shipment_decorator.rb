@@ -23,7 +23,7 @@ module Spree
           states = {}
           line_item_units_by_variant.group_by(&:state).each { |state, iu| states[state] = iu.length }
           quantity = line_item_units_by_variant.length
-          price = part ? line_item.price : (variant.price * discount_factor)
+          price = part ? (variant.price * discount_factor) : line_item.price
           items << OpenStruct.new(part: part,
                                   product: line_item.try(:product),
                                   line_item: line_item,
