@@ -12,4 +12,12 @@ Spree::Variant.class_eval do
   def part?
     assemblies.exists?
   end
+
+  def quantifier
+    if parts.any?
+      Spree::Stock::AssemblyQuantifier.new(self)
+    else
+      Spree::Stock::Quantifier.new(self)
+    end
+  end
 end
