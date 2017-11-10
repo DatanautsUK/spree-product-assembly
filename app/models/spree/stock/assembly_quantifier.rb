@@ -12,19 +12,23 @@ module Spree
       end
 
       def backorderable?
+        return false unless backordering_allowed?
         quantifiers.all?(&:backorderable?)
       end
 
       def can_supply?(required = 1)
         return false unless variant.available?
         return true if backorderable?
-        assemblies_with_quantifiers.each_pair do |assembly, quantifier|
-          return false unless quantifier.can_supply?(required * assembly.count)
+        assemblies_with_quantifiers.all? do |assembly, quantifier|
+          quantifier.can_supply?(required * assembly.count)
         end
-        true
       end
 
       private
+
+      def backordering_allowed?
+        ENV['ASSEMBLIES_BACKORDERABLE'].present?
+      end
 
       def quantifiers
         @quantifiers ||= assemblies_with_quantifiers.values
