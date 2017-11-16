@@ -38,7 +38,7 @@ module Spree
         @assemblies_with_quantifiers ||= variant.parts_variants
                                                 .includes(:part)
                                                 .each_with_object({}) do |pv, h|
-          h[pv] = Spree::Stock::Quantifier.new(pv.part)
+          h[pv] = AssemblyPartQuantifier.new(pv.part)
         end
       end
     end
